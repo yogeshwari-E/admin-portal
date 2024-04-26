@@ -1,17 +1,19 @@
 const updateUserModel = require("../../model/user-management/update-user-details.models");
 const dbURL = process.env.database_url;
+const { ObjectId } = require("mongodb")
 
 
 
 module.exports.addAccessToProjectsByOrganization = async (req, res, next) => {
   try {
-    const { dbName, userid, orgIds } = req;
+    let dbName = "ktern-masterdb"
+    const { userid, orgIds } = req.body;
     let user = await updateUserModel.getUserByID(dbName, dbURL, userid);
     let response = [];
 
     if (user) {
       // Formulate the User Structure
-      let projectUser = currentUser.map((currentUser) => ({
+      let projectUser = user.map((currentUser) => ({
         _id: currentUser._id,
         email: currentUser.email,
         userID: currentUser.userID,
@@ -57,7 +59,7 @@ module.exports.addAccessToProjectsByOrganization = async (req, res, next) => {
         if (organization && organization.projects && organization.projects.length > 0) {
 
           for (const projectId of organization.projects) {
-            let project = await updateUserModel.getProjectByProjectID(dbName, dbURL, orgId)
+            let project = await updateUserModel.getProjectByProjectID(dbName, dbURL, projectId)
 
             if (project) {
               const dbName = project.dbName;
@@ -118,19 +120,6 @@ module.exports.addAccessToProjectsByOrganization = async (req, res, next) => {
 
 
 
-
-
-
-  updateUserModel.processOrgs(userid, orgid, function (err, msg) {
-    if (err) throw err;
-
-    if (msg.status) {
-      res.status(200).json({
-        status: true
-      })
-    }
-  })
-  // console.log("Operation done")
 
   // 
 
