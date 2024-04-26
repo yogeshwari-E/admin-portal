@@ -14,10 +14,10 @@ router.get(
 );
 
 router.post(
-  "/getAccessToProjectsInOrganization",
+  "/addAccessToProjectsByOrganization",
   jwtHelper.verifyJwtToken,
   // getdbName.getDBNameByProjectID,
-  updateUserController.getAccessToProjects
+  updateUserController.addAccessToProjectsByOrganization
 );
 
 

@@ -21,6 +21,7 @@
     "lzutf8": "^0.6.3",
     "mongodb": "^3.3.3",
     "mongoose": "^7.6.3",
+    "nodemon": "^3.1.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "underscore": "^1.13.6"
