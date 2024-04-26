@@ -1,0 +1,25 @@
+{
+  "PORT": 5000,
+  "JWT_SECRET": "havehardtimecrackingme",
+  "JWT_EXP": "8h",
+  "host_protocol": "http",
+  "domainPolicy": "Localhost",
+  "host_name": "http://localhost:4200",
+  "database_url": "mongodb+srv://qas-app-rwuser:fSXQNZ7G9B38n4xi@quality-app.ss86w.mongodb.net/",
+  "file_db": "mongodb+srv://qas-app-rwuser:fSXQNZ7G9B38n4xi@quality-app.ss86w.mongodb.net/",
+  "avatar_url": "https://storage.googleapis.com/ktern-docs-files/user-avatar",
+  "sentry_key": "https://8215f7b36db7400f987b4bdb97d0ae02@o468766.ingest.sentry.io/5522828",
+  "customer_db": [
+    "edmimeters-ss4a",
+    "kaartechnologies-ks4at",
+    "metus-ss4a",
+    "metus-ss4a-30",
+    "asmpacific-ss4a",
+    "kternteam-ss4sc",
+    "developmentteam-kat"
+  ],
+  "mainNode_url": "http://localhost:3000",
+  "queueNode_url": "http://localhost:3003",
+  "redis_param": "redis://localhost:6379",
+  "redis_url": "redis://default:W7gTFHXjAtod@34.67.155.189:6379"
+}
