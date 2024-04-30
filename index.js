@@ -37,13 +37,6 @@ app.use((req, res, next) => {
 
 
 
- // Import your database connection module
-
-// Assuming `url` is defined somewhere in your code or environment
-
-// Connect to the MongoDB database
-
-
 app.use("/api", rtsIndex);
 app.use("/projectmanagement", rtsProjectManagement );
 app.use("/subscriptionmanagement", rtsSubcriptionManagement );

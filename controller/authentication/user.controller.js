@@ -23,6 +23,7 @@ module.exports.authenticate = (req, res, next) => {
           if (err) return res.status(400).json(err);
           //If Authentication succeeds
           else if (user) {
+            console.log(user);
             var token = User.generateJwt(user);
             callback(null, token, user);
           }

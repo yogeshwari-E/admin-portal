@@ -60,7 +60,7 @@ async function trySwitch(env) {
 }
 
 
-module.exports. formulateconfig = async () => {
+module.exports.formulateconfig = async () => {
   await trySwitch (env) ;
   var envConfig = JSON.parse(JSON.stringify(config));
 

@@ -29,22 +29,18 @@ var url = process.env.database_url;
 // }
 
 // Function to update subscription details based on the provided fields
-module.exports.updateSubscriptionDetails = function (dbName, dbURL, subscriptionId, updateFields, callback) {
-  dbconnection.DBConnection(url, function (err, db) {
-    if (err) throw err;
-    var dbo = db.db(dbName);
-
-    dbo.collection("kt_m_subscriptionDetails").updateOne(
-      { _id: ObjectID(subscriptionId) }, 
-      { $set: updateFields }, 
-      function (err, result) {
-        if (err) throw err;
-        var msg ={
-          status: true,
-          submsg: "Subscription Details Updated Successfully"
-        }
-        callback(null, msg);
-      }
+module.exports.updateSubscriptionDetails = async (dbName, dbURL, subscriptionId, updateFields) => {
+  try{
+    var client = await dbconnection.DBConnectionAsync(dbURL)
+    dbo = await client 
+    .db(dbName)
+    .collection("kt_m_subscriptionDetails")
+    .updateOne(
+      { _id: new ObjectID(subscriptionId) }, 
+      { $set: updateFields },
     );
-  });
-};
+  }
+  catch (err){
+    console.log(err);
+  }
+}

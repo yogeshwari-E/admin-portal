@@ -1,30 +1,38 @@
 const getSubscriptionModel = require("../../model/subscription-management/get-subscription-details.model");
 
-module.exports.getStreamSubscription = (req, res, next) => {
-  console.log(req.dbName);
+module.exports.getStreamSubscription = async (req, res, next) => {
+
   var project = req.dbName;
   var dbURL = req.dbURL;  
-
-  getSubscriptionModel.getStreamSubscriptionDetails( project, dbURL, function (err, subscriptionDetails){
-    if (err) throw err;
-
+try
+ { var subscriptionDetails = await getSubscriptionModel.getStreamSubscriptionDetails( project, dbURL);
     res.status(200).json({
       status: true,
       data: subscriptionDetails
     });
-  });
+  }
+  catch (err){
+    console.log(err);
+  }
 }
 
-module.exports.getStreamSubscriptionById = (req, res, next) => {
+module.exports.getStreamSubscriptionById = async (req, res, next) => {
   var project = req.dbName;
   var dbURL = req.dbURL;  
   var streamId = req.params.streamId;
-
-  getSubscriptionModel.getStreamSubscriptionDetailsById(project, dbURL, streamId, function (err, subscriptionDetails){
-    if (err) throw err;
+try
+ { subscriptionDetails = getSubscriptionModel.getStreamSubscriptionDetailsById(project, dbURL, streamId)
     res.status(200).json({
       status: true,
       data: subscriptionDetails
     });
+  }
+catch(err){
+  console.log(err);
+  res.status(400).json({
+    status: false,
+    data: `Somthing Went Wrong`,
   });
+  }
 }
+

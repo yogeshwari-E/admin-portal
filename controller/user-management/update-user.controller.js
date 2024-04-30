@@ -1,12 +1,10 @@
 const updateUserModel = require("../../model/user-management/update-user-details.models");
 const dbURL = process.env.database_url;
-const { ObjectId } = require("mongodb")
-
-
+const { ObjectId } = require("mongodb");
 
 module.exports.addAccessToProjectsByOrganization = async (req, res, next) => {
   try {
-    let dbName = "ktern-masterdb"
+    let dbName = "ktern-masterdb";
     const { userid, orgIds } = req.body;
     let user = await updateUserModel.getUserByID(dbName, dbURL, userid);
     let response = [];
@@ -54,12 +52,11 @@ module.exports.addAccessToProjectsByOrganization = async (req, res, next) => {
       }));
 
       for (const orgId of orgIds) {
-        let organization = await updateUserModel.getOrganizationByID(dbName, dbURL, orgId)
+        let organization = await updateUserModel.getOrganizationByID(dbName, dbURL, orgId);
 
         if (organization && organization.projects && organization.projects.length > 0) {
-
           for (const projectId of organization.projects) {
-            let project = await updateUserModel.getProjectByProjectID(dbName, dbURL, projectId)
+            let project = await updateUserModel.getProjectByProjectID(dbName, dbURL, projectId);
 
             if (project) {
               const dbName = project.dbName;
@@ -67,61 +64,60 @@ module.exports.addAccessToProjectsByOrganization = async (req, res, next) => {
 
               if (!finalData.includes(userid)) {
                 // If user not present add the user into Project Members
-                await updateUserModel.addUserAsProjectMemebersByProject(dbName, dbURL, projectId, userid)
+                await updateUserModel.addUserAsProjectMemebersByProject(
+                  dbName,
+                  dbURL,
+                  projectId,
+                  userid
+                );
 
                 // Check if the current user is already existing in the project Database users
-                let existingUser = await updateUserModel.getUserByProject(dbName, dbURL, userid)
+                let existingUser = await updateUserModel.getUserByProject(dbName, dbURL, userid);
 
                 // If not present add the user into the user collection of the project
                 if (!existingUser) {
-                  await updateUserModel.addUserToProject(dbName, dbURL, projectUser)
+                  await updateUserModel.addUserToProject(dbName, dbURL, projectUser);
 
-
-                  response.push(`Adding user to the Project ${projectUser[0].fullName} - ${dbName}`)
+                  response.push(
+                    `Adding user to the Project ${projectUser[0].fullName} - ${dbName}`
+                  );
                   console.log(`Adding user to the Project ${projectUser[0].fullName} - ${dbName}`);
-
                 } else {
                   console.log("User Already Present In the Project Database");
-                  response.push(`User Already Present In the Project Database ${dbName}`)
-
+                  response.push(`User Already Present In the Project Database ${dbName}`);
                 }
               } else {
                 console.log(`User is Already a member of the project ${dbName}`);
-                response.push(`User is Already a member of the project ${dbName}`)
-
+                response.push(`User is Already a member of the project ${dbName}`);
               }
             } else {
               console.log("Project Not Found");
-              response.push(`Project Not Found ${dbName}`)
-
+              response.push(`Project Not Found ${dbName}`);
             }
           }
         } else {
           console.log("Organization Not Found");
-          response.push(`Organization Not Found ${dbName}`)
+          res.status(404).json({
+            status: false,
+            message: "Organization Not Found",
+          });
+          response.push(`Organization Not Found ${dbName}`);
         }
       }
 
       return res.status(200).json({
         status: true,
-        message: response
-      })
-
+        message: "User Added Successfully",
+      });
     } else {
       res.status(404).json({
         status: false,
-        message: "User Not Found"
-      })
+        message: "User Not Found",
+      });
     }
-
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
 
-
-
-
-  // 
-
-
-}
+  //
+};

@@ -2,44 +2,53 @@ const waterfall = require("async-waterfall");
 
 const dbconnection = require("../db");
 var ObjectID = require("mongodb").ObjectID;
+const dbURL = process.env.database_url;
 
-
-var url = process.env.database_url;
-
-module.exports.changeActiveStatusByID = function (id, query, callback){
-  dbconnection.DBConnection(url, function (err, db) {
-    if (err) throw err;
-    var dbo = db.db("ktern-masterdb");
-    dbo
-      .collection("kt_m_projects")
-      .findOneAndUpdate( 
-        { _id: ObjectID(id) },
-        { $set : query },
-        { returnOriginal: false },
-        function (err, result) {
-          if (err) throw err;
-          callback(null, result);
-        });
-      });
-    }
-
-
-
-module.exports.addProjectToOrganization = function ( project, organization, callback){
-  dbconnection.DBConnection(url, function (err, db) {
-    if (err) throw err;
-
-    var dbo = db.db("ktern-masterdb");
-    dbo.collection("kt_m_organizations").updateOne(
-      { _id: ObjectID(organization) },
-      { $addToSet: { projects: ObjectID(project) } },
-      function(err, res) {
-        if (err) throw err;
-        var msg = {
-          status:true
-        }
-        return callback(null, msg);
-    });
-  })
+module.exports.changeActiveStatusByID = async (id, query, url) => {
+  try 
+  {
+    let client = await dbconnection.DBConnectionAsync(url);
+    var dbo = await client
+    .db("ktern-masterdb")
+    .collection("kt_m_projects")
+    .updateOne( 
+      { _id: new ObjectID(id) },
+      { $set : query },
+      { returnOriginal: false }
+    );
+    return dbo;
+  }
+  catch (err) {
+    console.log(err)
+  }
 }
+
+
+
+module.exports.addProjectToOrganization = async ( project, organization, org_name) => {
+try{
+    console.log("project", project);
+  let client = await dbconnection.DBConnectionAsync(dbURL);
+
+  var dbo = await client
+  .db("ktern-masterdb")
+  .collection("kt_m_organizations")
+  .updateOne(
+    { _id: ObjectID(organization) },
+    { $addToSet: { projects: ObjectID(project) } }
+  );
+  dbo = await client
+  .db("ktern-masterdb")
+  .collection("kt_m_projects")
+  .updateOne( 
+      { _id: new ObjectID(project)},
+      { $addToSet : {organizations : [org_name]} }
+  )
+  return dbo;
+}
+  catch (err){
+    console.log(err)
+  }
+}
+
     

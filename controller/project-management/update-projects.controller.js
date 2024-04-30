@@ -1,55 +1,65 @@
 const updateProjectModel = require("../../model/project-management/update-projects.model");
 const waterfall = require("async-waterfall");
+const updateUserModel = require("../../model/user-management/update-user-details.models")
 const getProjectController = require("../project-management/get-projects.controller")
-const getProjectModel = require("../../model/project-management/get-projects.model")
+const getProjectModel = require("../../model/project-management/get-projects.model");
+const { result } = require("underscore");
 
+const dbURL = process.env.database_url;
+module.exports.changeActiveStatusByID = async (req,res, next) =>{
 
-module.exports.changeActiveStatusByID = (req,res, next) =>{
-  var project = req.dbName;
-  var dbURL = req.dbURL;
   var query = req.body;
   var id = req.query.project;
   var status;
-  waterfall([
-    function ( callback ) {
-      updateProjectModel.changeActiveStatusByID( id,query, function(err, result)
-      { 
-        if( query.active === true){
-            status = "Activated"
-        }
-        else{
-          status = "Deactivated"
-        }
-        
-          if (err) throw err;
-          return res.status(200).json({
-            status: true,
-            msg: `Project Successfully ${status}`
-          });
-        });
-      }
-    ]);
-  }
 
-module.exports.addProjectToOrganization = (req, res, next) => {
-  var project = req.body.project;
-  var organization = req.body.organization;
-  updateProjectModel.addProjectToOrganization( project, organization, function (err, result) { 
-    if (err) throw err;
-    if (result.status) {
-      return res.status(200).json({
-        status: true,
-        msg: `Project Added to ${organization}`
-        })
-      }
+  await updateProjectModel.changeActiveStatusByID( id, query, dbURL); 
+    if( query.active === true){
+        status = "Activated"
+    }
     else{
-      return res.status(400).json({
-        status: true,
-        msg: `Something Bad Happened`
-        })
-      }
-    })
+      status = "Deactivated"
+    }
+    return res.status(200).json({
+      status: true,
+      msg: `Project Successfully ${status}`
+    });
+  
+}
+
+module.exports.addProjectToOrganization = async (req, res, next) => {
+ try{ 
+  var projects = req.body.projects;
+  var organization = req.body.organization;
+  var organizationDetails = await updateUserModel.getOrganizationByID("ktern-masterdb", dbURL, organization);
+  let org_name = organizationDetails.name;
+
+  let promises = projects.map(async (project) => {
+    return updateProjectModel.addProjectToOrganization(project, organization, org_name);
+  });
+
+  let results = await Promise.all(promises);
+
+  if (results.every(result => result.success)) {
+    return res.status(200).json({
+      status: true,
+      msg: `All projects added to organization successfully`
+    });
+  } else {
+    return res.status(400).json({
+      status: true,
+      msg: `Failed to add projects to organization`
+    });
   }
+}
+catch (err){
+  res.status(400).json({
+    status: false,
+    data: `Somthing Went Wrong`,
+  });
+  console.log(err)
+}
+}
+  
 
 
   
