@@ -6,8 +6,8 @@ module.exports.updateStreamSubscription = async (req, res, next) => {
   var streamId = req.params.streamId;
   var query =  req.body;
 try
-  { updateSubscriptionModel.updateSubscriptionDetails( dbName, dbURL, streamId, query)
-    console.log(result)
+  { await updateSubscriptionModel.updateSubscriptionDetails( dbName, dbURL, streamId, query)
+    // console.log(result)
     res.status(200).json({
       status: true,
       data: "Subscription Details Updated Successfully"

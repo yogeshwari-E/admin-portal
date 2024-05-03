@@ -34,12 +34,13 @@ module.exports.addProjectToOrganization = async (req, res, next) => {
   let org_name = organizationDetails.name;
 
   let promises = projects.map(async (project) => {
-    return updateProjectModel.addProjectToOrganization(project, organization, org_name);
+    return await updateProjectModel.addProjectToOrganization(project, organization, org_name);
   });
 
   let results = await Promise.all(promises);
+  console.log(results)
 
-  if (results.every(result => result.success)) {
+  if (results) {
     return res.status(200).json({
       status: true,
       msg: `All projects added to organization successfully`
